@@ -1,0 +1,84 @@
+import java.util.Scanner;
+public class CRC {
+	public static int t[] = new int[128], cs[] = new int[128],a,c,e,g[] = {1,0,1,1};
+	static final int n = g.length;
+	static void xor()
+	{
+		for(c = 1; c<n; c++)
+		{
+			cs[c] = ((cs[c] == g[c])?0:1);
+		}
+	}
+	
+	static void crc()
+	{
+		for(c = 0; c<n; c++)
+			cs[c] = t[c];
+		do
+		{
+			if(cs[0] == 1)
+				xor();
+			for(c = 0;c<n-1; c++)
+				cs[c] = cs[c+1];
+			cs[c] = t[e++];
+	
+		}while(e<=a+n-1);
+	}
+	
+	public static void main(String[] args)
+	{
+		Scanner in = new Scanner(System.in);
+		System.out.println("Enter the size of dataword:");
+		int a = in.nextInt();
+		System.out.println("Enter the dataword:");
+		for(int i=0; i<a; i++)
+			t[i] = in.nextInt();
+		
+		for(int i=a; i<a+n-1; i++)
+			t[i] = 0;
+		
+		System.out.println("Modified dataword:");
+		for(int i=0; i<a+n-1; i++)
+			System.out.print(t[i]);
+		
+		System.out.println();
+		
+		crc();
+		System.out.println("Checksum:");
+		for(int i=0; i<n-1;i++)
+			System.out.print(cs[i]);
+		System.out.println();
+		
+		for(int e=a; e<a+n-1; e++)
+			t[e] = cs[e-a];
+		System.out.println("Final codeword:");
+		for(int i=0; i<a+n-1;i++)
+			System.out.print(t[i]);
+		System.out.println();
+		
+		System.out.print("Test Error detection (0 for yes && 1 for no):");
+		System.out.println();
+		e = in.nextInt();
+		
+		if(e == 0)
+		{
+			System.out.format("Enter the position between %d and %d to introduce error",0,a-1);
+			System.out.println();
+			e = in.nextInt();
+			t[e] = ((t[e] == 0)?1:0);
+			System.out.println("Dataword after error:");
+			for(int i=0; i<a; i++)
+				System.out.print(t[i]);
+			System.out.println();
+			crc();
+		
+			for(e = 0; (e<n-1) && (cs[e]!=1); e++);
+			if(e < n-1)
+				System.out.println("Error detected");
+			else
+				System.out.println("No error detected");		
+		
+		}	
+		
+	}
+}
