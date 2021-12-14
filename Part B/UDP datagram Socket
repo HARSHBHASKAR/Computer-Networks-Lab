@@ -1,0 +1,96 @@
+// CLIENT PROGRAM
+
+import java.util.Scanner;
+import java.io.*;
+import java.net.*;
+
+public class Client70 {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		Socket s;
+		while(true)
+		{
+			try
+			{
+				s = new Socket("172.16.9.131",3000);
+				OutputStream ostream = s.getOutputStream();
+				System.out.println("Enter Filename:");
+				Scanner input = new Scanner(System.in);
+				String fname = input.nextLine();
+				PrintWriter pwrite = new PrintWriter(ostream,true);
+				pwrite.println(fname);
+				
+				InputStream istream = s.getInputStream();
+				Scanner cRead = new Scanner(new InputStreamReader(istream));
+				while(cRead.hasNext())
+				{
+					System.out.println(cRead.nextLine());
+				}
+				pwrite.close();
+				s.close();
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+	}
+}
+
+// SERVER PROGRAM
+
+import java.util.Scanner;
+import java.net.*;
+import java.io.*;
+
+public class Server70 {
+
+	public static void main(String[] args) throws IOException {
+		// TODO Auto-generated method stub
+		ServerSocket ss = null;
+		Socket s = null;
+		try
+		{
+			ss = new ServerSocket(3000);
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		
+		while(true)
+		{
+			try
+			{
+				System.out.println("Server Ready");
+				s = ss.accept();
+				System.out.println("Client Connected...");
+				InputStream istream = s.getInputStream();
+				Scanner fread = new Scanner(new InputStreamReader(istream));
+				
+				String filename = fread.nextLine();
+				System.out.println("Reading contents of "+ filename);
+				Scanner contentRead = new Scanner(new FileReader(filename));
+				
+				OutputStream ostream = s.getOutputStream();
+				PrintWriter pwrite = new PrintWriter(ostream,true);
+				String str;
+				while(contentRead.hasNext())
+				{
+					pwrite.println(contentRead.nextLine());
+				}
+				pwrite.close();
+				s.close();
+			}
+			catch(FileNotFoundException e)
+			{
+				System.out.println("File not found");
+				OutputStream ostream = s.getOutputStream();
+				PrintWriter pwrite = new PrintWriter(ostream,true);
+				System.out.println("File not found");
+				pwrite.close();
+			}
+		}
+	}
+}
