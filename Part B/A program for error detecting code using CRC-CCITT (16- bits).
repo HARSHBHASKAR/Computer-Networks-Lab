@@ -12,8 +12,8 @@ public class CRC {
 	
 	static void crc()
 	{
-		for(c = 0; c<n; c++)
-			cs[c] = t[c];
+		for(e = 0; e<n; c++)
+			cs[e] = t[e];
 		do
 		{
 			if(cs[0] == 1)
